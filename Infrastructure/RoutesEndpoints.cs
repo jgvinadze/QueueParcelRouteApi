@@ -1,9 +1,9 @@
 ﻿
-using QueueParcelRouteApi.Infrastructure;
 using System.Diagnostics;
+using System.Runtime.CompilerServices;
 using System.Text.Json.Serialization;
 
-namespace QueueParcelRouteApi.EndPoints
+namespace QueueParcelRouteApi.Infrastructure
 {
     public class RoutesEndpoints
     {
@@ -17,6 +17,7 @@ namespace QueueParcelRouteApi.EndPoints
             oracleSql = _sql;
             mariaDbSqlText= _mariadbSql;
         }
+
         public async Task<List<Domain.Parcel>> InsParcelRoutesInMariaDbAsync()
         {
             List<Domain.Parcel> parcelRoutes;
@@ -40,8 +41,8 @@ namespace QueueParcelRouteApi.EndPoints
 
                     var tm = st.ElapsedMilliseconds;
 
-                    // await new OracleRoutes(connection, oracleSql)
-                    //                 .DeleteProcessed();
+                    await new OracleRoutes(connection, oracleSql)
+                                    .DeleteProcessed();
                 }
             }
             catch (Exception ex)
@@ -65,4 +66,5 @@ namespace QueueParcelRouteApi.EndPoints
             }
         }
     }
+ 
 }

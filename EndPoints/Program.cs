@@ -1,5 +1,4 @@
 using Microsoft.AspNetCore.Mvc;
-using QueueParcelRouteApi.EndPoints;
 using QueueParcelRouteApi.Infrastructure;
 
 var builder = WebApplication.CreateBuilder(args);
