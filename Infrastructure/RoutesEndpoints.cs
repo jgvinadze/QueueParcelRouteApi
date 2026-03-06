@@ -1,4 +1,6 @@
 ﻿
+using Infrastructure.Exceptions;
+using Microsoft.Extensions.Logging;
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using System.Text.Json.Serialization;
@@ -10,12 +12,14 @@ namespace QueueParcelRouteApi.Infrastructure
         private readonly DapperDbConnectionFactory connection;
         private readonly IOracleSqlText oracleSql;
         private readonly IMariaDbSqlText mariaDbSqlText;
+        private readonly ILogger logger;
 
-        public RoutesEndpoints(DapperDbConnectionFactory _connection, IOracleSqlText _sql,IMariaDbSqlText _mariadbSql)
+        public RoutesEndpoints(DapperDbConnectionFactory _connection,ILogger<GlobalExceptionHandler> _logger, IOracleSqlText _sql,IMariaDbSqlText _mariadbSql)
         {
             connection = _connection;
             oracleSql = _sql;
             mariaDbSqlText= _mariadbSql;
+            logger = _logger;
         }
 
         public async Task<List<Domain.Parcel>> InsParcelRoutesInMariaDbAsync()
@@ -47,6 +51,7 @@ namespace QueueParcelRouteApi.Infrastructure
             }
             catch (Exception ex)
             {
+                logger.LogError(ex.Message);
                 throw new Exception(ex.Message);
             }
           
@@ -62,6 +67,7 @@ namespace QueueParcelRouteApi.Infrastructure
             }
             catch (Exception ex)
             {
+                logger.LogError(ex.Message);
                 throw new Exception(ex.Message);
             }
         }

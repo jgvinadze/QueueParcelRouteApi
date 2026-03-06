@@ -1,3 +1,4 @@
+using Infrastructure.Exceptions;
 using Microsoft.AspNetCore.Mvc;
 using QueueParcelRouteApi.Infrastructure;
 
@@ -13,6 +14,8 @@ var app = builder.Build();
 
 // Configure the HTTP request pipeline.
 app.Logger.LogInformation("service QueueParcelRouteApi started");
+
+app.UseMiddleware<GlobalExceptionHandler>();
 
 app.UseHttpsRedirection();
 
