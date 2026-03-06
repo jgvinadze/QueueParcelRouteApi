@@ -20,7 +20,7 @@ namespace Infrastructure.Exceptions
             }
             catch (Exception ex)
             {
-               // logger.LogError(ex, "Unhandled exception occured");
+                logger.LogError(ex, "Unhandled exception occured");
 
                 context.Response.StatusCode = ex switch
                 {
