@@ -26,8 +26,7 @@ namespace QueueParcelRouteApi.Infrastructure
         {
             List<Domain.Parcel> parcelRoutes;
             bool res = false;
-            Stopwatch  st = new Stopwatch();
-            st.Start();
+
             try
             {
                 OracleRoutes oracleRoute = new OracleRoutes(connection, oracleSql);
@@ -42,8 +41,6 @@ namespace QueueParcelRouteApi.Infrastructure
 
                     res = await oracleRoute
                                     .UpdateStatusProcessed(parcelRoutes);
-
-                    var tm = st.ElapsedMilliseconds;
 
                     await new OracleRoutes(connection, oracleSql)
                                     .DeleteProcessed();
