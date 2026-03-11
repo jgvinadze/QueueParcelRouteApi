@@ -19,7 +19,7 @@ namespace QueueParcelRouteApi.Infrastructure
 
             try
             {                
-                parcels_routes = await JoinedQueryAsync(oracleSqlText.selectUnProcessedParces, null).ConfigureAwait(false);
+                parcels_routes = await JoinedQueryAsync(oracleSqlText.selectUnProcessedParcels, null).ConfigureAwait(false);
             }
             catch(Exception ex)
             {
