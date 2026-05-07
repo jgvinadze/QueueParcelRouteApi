@@ -4,6 +4,7 @@ using System.Data;
 using System.Data.Common;
 using System.Numerics;
 using System.Runtime.CompilerServices;
+using System.Xml;
 
 namespace QueueParcelRouteApi.Infrastructure
 {
@@ -34,13 +35,16 @@ namespace QueueParcelRouteApi.Infrastructure
             }
         }
 
-        protected async Task<List<Parcel>> JoinedQueryAsync(string sqlText, object parameters = null)
+        protected async Task<List<Parcel>> JoinedQueryAsync(string sqlText,CancellationToken token, object parameters = null)
         {
             var parcelDictionary = new Dictionary<int, Parcel>();
             using (var connection = CreateConnection())
             {
+                var command = new CommandDefinition(sqlText, parameters, cancellationToken: token);
+
                 IEnumerable<Parcel> listParcels = await connection.QueryAsync<Parcel, Domain.Route, Parcel>(
-                        sqlText,
+
+                        command,
 
                         (parcels, routes) =>
                         {
@@ -72,7 +76,7 @@ namespace QueueParcelRouteApi.Infrastructure
             }
         }
 
-        protected async Task<bool> InsDelQueryAsync(string sqlParcelText, string sqlRoutesText, object parameters_1 = null,object parameters_2 = null)
+        protected async Task<bool> InsDelQueryAsync(string sqlParcelText, string sqlRoutesText, CancellationToken ct, object parameters_1 = null,object parameters_2 = null)
         {
             using (var connection = CreateConnection())
             {
@@ -81,9 +85,13 @@ namespace QueueParcelRouteApi.Infrastructure
 
                 try
                 {
-                   var r = await connection.ExecuteAsync(sqlRoutesText, parameters_2, transaction: transaction).ConfigureAwait(false);
+                    var routeCommand = new CommandDefinition(sqlRoutesText, parameters_2, transaction: transaction, cancellationToken: ct);
 
-                   var p = await connection.ExecuteAsync(sqlParcelText, parameters_1, transaction: transaction).ConfigureAwait(false);
+                    var r = await connection.ExecuteAsync(routeCommand).ConfigureAwait(false);
+
+                    var parcelCommand = new CommandDefinition(sqlParcelText, parameters_1, transaction: transaction, cancellationToken: ct);
+
+                    var p = await connection.ExecuteAsync(parcelCommand).ConfigureAwait(false);
 
                     transaction.Commit();
                 }

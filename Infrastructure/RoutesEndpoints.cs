@@ -22,7 +22,7 @@ namespace QueueParcelRouteApi.Infrastructure
             logger = _logger;
         }
 
-        public async Task<List<Domain.Parcel>> InsParcelRoutesInMariaDbAsync()
+        public async Task<List<Domain.Parcel>> InsParcelRoutesInMariaDbAsync(CancellationToken ct)
         {
             List<Domain.Parcel> parcelRoutes;
             bool res = false;
@@ -32,39 +32,37 @@ namespace QueueParcelRouteApi.Infrastructure
                 OracleRoutes oracleRoute = new OracleRoutes(connection, oracleSql);
 
                 parcelRoutes = await oracleRoute
-                    .GetUnProcessedRoutes();
+                    .GetUnProcessedRoutes(ct);
 
-                if (parcelRoutes != null)
+                if (parcelRoutes != null && parcelRoutes.Count>0)
                 {
                     res = await new MariaDbRoutes(connection, mariaDbSqlText)
-                                    .TransferRoutes(parcelRoutes);
+                                    .TransferRoutes(parcelRoutes,ct);
 
                     res = await oracleRoute
-                                    .UpdateStatusProcessed(parcelRoutes);
+                                    .UpdateStatusProcessed(parcelRoutes,ct);
 
                     await new OracleRoutes(connection, oracleSql)
-                                    .DeleteProcessed();
+                                    .DeleteProcessed(ct);
                 }
             }
             catch (Exception ex)
             {
-                logger.LogError(ex.Message);
                 throw new Exception(ex.Message);
             }
           
             return parcelRoutes;
         }
 
-        public async Task<bool> DeleteProcessedParcelsAndRoutesAsync()
+        public async Task<bool> DeleteProcessedParcelsAndRoutesAsync(CancellationToken ct)
         {
             try
             {
                 return await new OracleRoutes(connection, oracleSql)
-                                    .DeleteProcessed();  
+                                    .DeleteProcessed(ct);  
             }
             catch (Exception ex)
             {
-                logger.LogError(ex.Message);
                 throw new Exception(ex.Message);
             }
         }

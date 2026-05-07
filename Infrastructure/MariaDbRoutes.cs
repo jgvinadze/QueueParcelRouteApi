@@ -10,7 +10,7 @@ namespace QueueParcelRouteApi.Infrastructure
             mariaDbSqlText = sql;
         }
 
-        public async Task<bool> TransferRoutes(List<Domain.Parcel> parcelRoutes)
+        public async Task<bool> TransferRoutes(List<Domain.Parcel> parcelRoutes,CancellationToken ct)
         {
             bool result;
 
@@ -18,7 +18,7 @@ namespace QueueParcelRouteApi.Infrastructure
             {
                 var routes = parcelRoutes.SelectMany(x => x.routes).AsEnumerable();
 
-                result = await InsDelQueryAsync(mariaDbSqlText.InsertParcelsInMariaDb, mariaDbSqlText.InsertRoutesInMariaDb , parcelRoutes, routes);
+                result = await InsDelQueryAsync(mariaDbSqlText.InsertParcelsInMariaDb, mariaDbSqlText.InsertRoutesInMariaDb, ct, parcelRoutes, routes);
             }
             catch(Exception ex)
             {

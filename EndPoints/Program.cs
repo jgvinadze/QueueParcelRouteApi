@@ -19,9 +19,9 @@ app.UseMiddleware<GlobalExceptionHandler>();
 
 app.UseHttpsRedirection();
 
-app.MapGet("/ParcelRoutes/InsParcelRoutesInMariaDbAsync", async ([FromServices] RoutesEndpoints endPoints) => {
+app.MapGet("/ParcelRoutes/InsParcelRoutesInMariaDbAsync", async ([FromServices] RoutesEndpoints endPoints, CancellationToken ct) => {
 
-    var result = await endPoints.InsParcelRoutesInMariaDbAsync();
+    var result = await endPoints.InsParcelRoutesInMariaDbAsync(ct);
 
     if (result == null)
         return Results.BadRequest();
@@ -29,10 +29,10 @@ app.MapGet("/ParcelRoutes/InsParcelRoutesInMariaDbAsync", async ([FromServices] 
     return Results.Ok(result);
 });
 
-app.MapPost("/ParcelRoutes/DeleteProcessedParcelsAndRoutesAsync", async ([FromServices] RoutesEndpoints endPoints) =>
+app.MapPost("/ParcelRoutes/DeleteProcessedParcelsAndRoutesAsync", async ([FromServices] RoutesEndpoints endPoints, CancellationToken ct) =>
 {
 
-    var result = await endPoints.DeleteProcessedParcelsAndRoutesAsync();
+    var result = await endPoints.DeleteProcessedParcelsAndRoutesAsync(ct);
 
     if (result == false)
         return Results.BadRequest();
