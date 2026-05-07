@@ -40,24 +40,24 @@ namespace QueueParcelRouteApi.Infrastructure
             using (var connection = CreateConnection())
             {
                 IEnumerable<Parcel> listParcels = await connection.QueryAsync<Parcel, Domain.Route, Parcel>(
-                                            sqlText,
+                        sqlText,
 
-                                            (parcels, routes) =>
-                                            {
-                                                if (!parcelDictionary.TryGetValue(parcels.parcel_id, out Parcel existingParcel))
-                                                {
-                                                    existingParcel = parcels;
-                                                    parcelDictionary.Add(existingParcel.parcel_id, existingParcel);
-                                                }
+                        (parcels, routes) =>
+                        {
+                            if (!parcelDictionary.TryGetValue(parcels.parcel_id, out Parcel existingParcel))
+                            {
+                                existingParcel = parcels;
+                                parcelDictionary.Add(existingParcel.parcel_id, existingParcel);
+                            }
 
-                                                existingParcel.routes.Add(routes);
+                            existingParcel.routes.Add(routes);
 
-                                                return existingParcel;
-                                            },
+                            return existingParcel;
+                        },
 
-                                            splitOn: "route_Id"
+                        splitOn: "route_Id"
 
-                                        ).ConfigureAwait(false);
+                    ).ConfigureAwait(false);
 
             }
 
