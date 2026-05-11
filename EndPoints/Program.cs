@@ -1,3 +1,4 @@
+using EndPoints;
 using Infrastructure.Exceptions;
 using Microsoft.AspNetCore.Mvc;
 using QueueParcelRouteApi.Infrastructure;
@@ -19,26 +20,7 @@ app.UseMiddleware<GlobalExceptionHandler>();
 
 app.UseHttpsRedirection();
 
-app.MapGet("/ParcelRoutes/InsParcelRoutesInMariaDbAsync", async ([FromServices] RoutesEndpoints endPoints, CancellationToken ct) => {
-
-    var result = await endPoints.InsParcelRoutesInMariaDbAsync(ct);
-
-    if (result == null)
-        return Results.BadRequest();
-
-    return Results.Ok(result);
-});
-
-app.MapPost("/ParcelRoutes/DeleteProcessedParcelsAndRoutesAsync", async ([FromServices] RoutesEndpoints endPoints, CancellationToken ct) =>
-{
-
-    var result = await endPoints.DeleteProcessedParcelsAndRoutesAsync(ct);
-
-    if (result == false)
-        return Results.BadRequest();
-
-    return Results.Ok(result);
-});
+app.AddEndPoints();
 
 app.Run();
 
